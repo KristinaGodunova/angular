@@ -1,12 +1,42 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ItemComponent } from './item/item'; // 1. Проверь этот импорт
+import { Item } from './item';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [CommonModule, ItemComponent], // 2. ОБЯЗАТЕЛЬНО добавь ItemComponent сюда
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('items');
+export class AppComponent {
+  title = 'todo';
+
+  filter: 'all' | 'active' | 'done' = 'all';
+
+  allItems = [
+    { description: 'eat', done: true },
+    { description: 'sleep', done: false },
+    { description: 'play', done: false },
+    { description: 'laugh', done: false },
+  ];
+
+  get items() {
+    if (this.filter === 'all') {
+      return this.allItems;
+    }
+    return this.allItems.filter(item => this.filter === 'done' ? item.done : !item.done);
+  }
+
+  addItem(description: string) {
+  this.allItems.unshift({
+    description,
+    done: false
+  });
+  }
+
+  remove(item : Item) {
+  this.allItems.splice(this.allItems.indexOf(item), 1);
+  }
 }
